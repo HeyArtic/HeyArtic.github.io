@@ -1,0 +1,27 @@
+[
+    {
+        "title": "Naruto",
+        "image": "assets/img/imgp/narutoc.jpg",
+        "url": "assets/naruto/naruto.php"
+    },
+    {
+        "image": "assets/img/imgp/narutos.jpg",
+        "title": "Naruto Shippuden",
+        "url": "assets/naruto/naruto.php"
+    },
+    {
+        "title": "Demon Slayer",
+        "image": "assets/img/imgp/demonslayer",
+        "url": "assets/naruto/naruto.php"
+    },
+    {
+        "title": "Dragon ball Z",
+        "image": "assets/img/imgp/dgz.jpg",
+        "url": "assets/naruto/naruto.php"
+    },
+    {
+        "title": "One Piece",
+        "image": "assets/img/imgp/onep.webp",
+        "url": "assets/naruto/naruto.php"
+    }
+]

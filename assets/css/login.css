@@ -1,0 +1,125 @@
+* {
+	font-family: 'Poppins', sans-serif;
+	box-sizing: border-box;
+}
+
+.m {
+	height: 40vh;
+}
+
+
+.login {
+	display: flex;
+	justify-content: center;
+	margin-top: 10%;
+	max-width: 100%;
+	align-items: center;
+}
+
+.login form {
+	width: 500px;
+	border: 2px solid #000000;
+	padding: 30px;
+	background: #090909;
+	border-radius: 15px;
+}
+
+.login h2 {
+	color: #fff;
+	text-align: center;
+	margin-bottom: 40px;
+}
+
+.login input {
+	display: block;
+	border: 2px solid #ccc;
+	width: 95%;
+	padding: 10px;
+	margin: 10px auto;
+	border-radius: 5px;
+}
+
+.login label {
+	color: #888;
+	font-size: 18px;
+	padding: 10px;
+}
+
+.login input::placeholder {
+	color: #434242;
+}
+
+.login button {
+	float: right;
+	background: #0187a7;
+	padding: 10px 15px;
+	color: #fff;
+	border-radius: 5px;
+	margin-right: 10px;
+	border: none;
+}
+
+.login button:hover {
+	opacity: .7;
+}
+
+.error {
+	background: #F2DEDE;
+	color: #A94442;
+	padding: 10px;
+	width: 95%;
+	border-radius: 5px;
+	margin: 20px auto;
+}
+
+.success {
+	background: #D4EDDA;
+	color: #40754C;
+	padding: 10px;
+	width: 95%;
+	border-radius: 5px;
+	margin: 20px auto;
+}
+
+.login h1 {
+	text-align: center;
+	color: #fff;
+}
+
+.login .ca {
+	font-size: 14px;
+	display: inline-block;
+	padding: 10px;
+	text-decoration: none;
+	color: #0187a7;
+}
+
+.login .ca:hover {
+	text-decoration: underline;
+}
+
+.home-nav a {
+	padding: 10px;
+	color: #f7bd65;
+	text-transform: uppercase;
+	text-decoration: none;
+}
+
+
+@media screen and (max-width: 1095px) {
+	.login {
+		width: 95%;
+		margin-top: 10000px;
+		margin: 100px 10px;
+	}
+
+	.m {
+		height: 10vh;
+	}
+
+	.mobile-procurar-icon {
+		display: none;
+	}
+
+
+}
