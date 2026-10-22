@@ -1,0 +1,183 @@
+---
+import { existsSync, statSync } from 'node:fs';
+import { join } from 'node:path';
+import Icon from './Icon.astro';
+import SectionHeading from './SectionHeading.astro';
+import CertificateViewer from './CertificateViewer.astro';
+import { certificates, certificateCategories } from '../data/certificates';
+import { ui } from '../i18n/ui';
+import { t, tr, trAttrs, serializeForScript } from '../i18n/server';
+import { sortByDateDesc, searchText, totalHours, formatDate, formatBytes } from '../lib/certificates';
+import { withBase } from '../lib/url';
+
+const CERT_DIR = 'certificates';
+
+// Verificado no build: um registro cujo PDF não existe aparece como "indisponível".
+const items = sortByDateDesc(certificates).map((cert) => {
+  const diskPath = cert.file ? join(process.cwd(), 'public', CERT_DIR, cert.file) : null;
+  const available = Boolean(diskPath && existsSync(diskPath));
+  const size = available && diskPath ? statSync(diskPath).size : null;
+  const labels = cert.category ? [ui.pt.certs.category[cert.category], ui.en.certs.category[cert.category]] : [];
+  return {
+    cert,
+    available,
+    size,
+    href: cert.file ? withBase(`${CERT_DIR}/${cert.file}`) : null,
+    search: searchText(cert, labels),
+  };
+});
+
+const total = items.length;
+const hours = totalHours(certificates);
+const categories = certificateCategories
+  .map((id) => ({ id, count: certificates.filter((c) => c.category === id).length }))
+  .filter((c) => c.count > 0);
+const showControls = total >= 4;
+
+const viewerData = items.map(({ cert, available, href }) => ({
+  id: cert.id,
+  title: cert.title,
+  issuer: cert.issuer,
+  file: cert.file,
+  href,
+  verifyUrl: cert.verifyUrl,
+  available,
+}));
+---
+<section class="section" id="certificados" aria-labelledby="certs-title">
+  <div class="container">
+    <SectionHeading id="certs-title" command="certs.command" title="certs.title" intro="certs.intro" />
+
+    <div class="explorer reveal" data-cert-explorer>
+      <div class="explorer-bar">
+        <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="explorer-path">alisson@portfolio:~/certifications</span>
+      </div>
+
+      <div class="explorer-toolbar">
+        <p class="explorer-total">
+          <span {...tr('certs.total', { n: total })}>{t('certs.total', { n: total })}</span>
+          <span class="sep" aria-hidden="true">·</span>
+          <span {...tr('certs.hoursTotal', { n: hours })}>{t('certs.hoursTotal', { n: hours })}</span>
+        </p>
+
+        {showControls && (
+          <div class="explorer-controls">
+            <div class="search-field">
+              <label class="sr-only" for="cert-search" {...tr('certs.searchLabel')}>{t('certs.searchLabel')}</label>
+              <Icon name="search" size={16} class="search-icon" />
+              <input
+                id="cert-search"
+                class="search-input"
+                type="search"
+                autocomplete="off"
+                spellcheck="false"
+                maxlength="60"
+                data-cert-search
+                {...trAttrs({ placeholder: 'certs.searchPlaceholder' })}
+              />
+            </div>
+            <div class="filters" role="group" {...trAttrs({ 'aria-label': 'certs.filterLabel' })}>
+              <button type="button" class="filter-btn" data-cert-filter="all" aria-pressed="true">
+                <span {...tr('certs.all')}>{t('certs.all')}</span>
+                <span class="filter-count">{total}</span>
+              </button>
+              {categories.map((c) => (
+                <button type="button" class="filter-btn" data-cert-filter={c.id} aria-pressed="false">
+                  <span {...tr(`certs.category.${c.id}`)}>{t(`certs.category.${c.id}`)}</span>
+                  <span class="filter-count">{c.count}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+        <p class="explorer-status" role="status" data-cert-status>
+          {t('certs.showing', { shown: total, total })}
+        </p>
+      </div>
+
+      <ul class="cert-grid" data-cert-grid>
+        {items.map(({ cert, available, size, href, search }) => (
+          <li
+            class:list={['cert-card', { 'is-missing': !available }]}
+            data-cert-id={cert.id}
+            data-category={cert.category ?? ''}
+            data-search={search}
+          >
+            <div class="cert-icon" aria-hidden="true">
+              <Icon name="file" size={28} />
+              <span class="cert-format">PDF</span>
+            </div>
+            <div class="cert-body">
+              {cert.file && (
+                <p class="cert-file">
+                  {cert.file}
+                  {size !== null && <span class="cert-size"> · {formatBytes(size)}</span>}
+                </p>
+              )}
+              <h3 class="cert-title" lang="pt-BR">{cert.title}</h3>
+              {cert.issuer && <p class="cert-issuer">{cert.issuer}</p>}
+              <p class="cert-meta">
+                {cert.category && (
+                  <span class="chip chip-sm" {...tr(`certs.category.${cert.category}`)}>{t(`certs.category.${cert.category}`)}</span>
+                )}
+                {cert.type && <span {...tr(`certs.type.${cert.type}`)}>{t(`certs.type.${cert.type}`)}</span>}
+                {cert.issuedAt && (
+                  <time datetime={cert.issuedAt} data-date={cert.issuedAt}>{formatDate(cert.issuedAt, 'pt')}</time>
+                )}
+                {cert.hours !== null && <span>{cert.hours}h</span>}
+              </p>
+            </div>
+            <div class="cert-actions">
+              {available && href ? (
+                <>
+                  <button
+                    type="button"
+                    class="btn btn-ghost btn-sm"
+                    data-cert-view={cert.id}
+                    aria-haspopup="dialog"
+                    {...trAttrs({ 'aria-label': ['certs.viewOf', { title: cert.title }] })}
+                  >
+                    <Icon name="eye" size={16} />
+                    <span {...tr('certs.view')}>{t('certs.view')}</span>
+                  </button>
+                  <a
+                    class="icon-btn icon-btn-sm"
+                    href={href}
+                    target="_blank"
+                    rel="noopener"
+                    {...trAttrs({ 'aria-label': ['certs.openOf', { title: cert.title }], title: 'certs.open' })}
+                  >
+                    <Icon name="external" size={16} />
+                  </a>
+                  <a
+                    class="icon-btn icon-btn-sm"
+                    href={href}
+                    download
+                    {...trAttrs({ 'aria-label': ['certs.downloadOf', { title: cert.title }], title: 'certs.download' })}
+                  >
+                    <Icon name="download" size={16} />
+                  </a>
+                </>
+              ) : (
+                <span class="cert-unavailable" {...tr('certs.unavailable')}>{t('certs.unavailable')}</span>
+              )}
+            </div>
+          </li>
+        ))}
+      </ul>
+
+      <div class="cert-empty" data-cert-empty hidden>
+        <p {...tr('certs.empty')}>{t('certs.empty')}</p>
+        <button type="button" class="btn btn-secondary btn-sm" data-cert-clear>
+          <span {...tr('certs.clear')}>{t('certs.clear')}</span>
+        </button>
+      </div>
+    </div>
+
+    <p class="source-note" {...tr('certs.privacy')}>{t('certs.privacy')}</p>
+  </div>
+
+  <CertificateViewer />
+  <script type="application/json" id="cert-data" set:html={serializeForScript(viewerData)} />
+</section>

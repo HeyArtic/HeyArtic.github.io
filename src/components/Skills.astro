@@ -1,0 +1,52 @@
+---
+import SectionHeading from './SectionHeading.astro';
+import { skillCategories, type EvidenceKind } from '../data/skills';
+import { dataKey } from '../i18n/dictionary';
+import { t, tr, trAttrs } from '../i18n/server';
+
+const kinds: EvidenceKind[] = ['project', 'study', 'work'];
+const glyph: Record<EvidenceKind, string> = { project: '▸', study: '◆', work: '●' };
+---
+<section class="section section-alt" id="competencias" aria-labelledby="skills-title">
+  <div class="container">
+    <SectionHeading id="skills-title" command="skills.command" title="skills.title" intro="skills.intro">
+      <dl class="legend" {...trAttrs({ 'aria-label': 'skills.legend' })}>
+        {kinds.map((kind) => (
+          <div class="legend-item">
+            <dt class={`evidence evidence-${kind}`}>
+              <span aria-hidden="true">{glyph[kind]}</span>
+              <span {...tr(`skills.evidence.${kind}`)}>{t(`skills.evidence.${kind}`)}</span>
+            </dt>
+            <dd {...tr(`skills.evidenceLong.${kind}`)}>{t(`skills.evidenceLong.${kind}`)}</dd>
+          </div>
+        ))}
+      </dl>
+    </SectionHeading>
+
+    <div class="skill-grid">
+      {skillCategories.map((cat) => (
+        <section class="card skill-card reveal" aria-labelledby={`skill-${cat.id}`}>
+          <h3 class="skill-title" id={`skill-${cat.id}`} {...tr(dataKey.skillCategory(cat.id))}>
+            {t(dataKey.skillCategory(cat.id))}
+          </h3>
+          <ul class="skill-list">
+            {cat.skills.map((skill, i) => (
+              <li class="skill-row">
+                <span class="skill-name" {...tr(dataKey.skillName(cat.id, i))}>{t(dataKey.skillName(cat.id, i))}</span>
+                <span class="skill-evidence">
+                  {skill.evidence.map((kind) => (
+                    <span class={`evidence evidence-${kind}`} {...trAttrs({ title: `skills.evidenceLong.${kind}` })}>
+                      <span aria-hidden="true">{glyph[kind]}</span>
+                      <span {...tr(`skills.evidence.${kind}`)}>{t(`skills.evidence.${kind}`)}</span>
+                    </span>
+                  ))}
+                </span>
+                <span class="skill-where" {...tr(dataKey.skillWhere(cat.id, i))}>{t(dataKey.skillWhere(cat.id, i))}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+    </div>
+  </div>
+</section>

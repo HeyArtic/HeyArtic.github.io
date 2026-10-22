@@ -1,0 +1,41 @@
+---
+import ProjectCard from './ProjectCard.astro';
+import ProjectDialog from './ProjectDialog.astro';
+import SectionHeading from './SectionHeading.astro';
+import Icon from './Icon.astro';
+import { projects, otherRepos } from '../data/projects';
+import { dataKey } from '../i18n/dictionary';
+import { t, tr } from '../i18n/server';
+---
+<section class="section" id="projetos" aria-labelledby="projects-title">
+  <div class="container">
+    <SectionHeading id="projects-title" command="projects.command" title="projects.title" intro="projects.intro" />
+
+    <div class="project-grid">
+      {projects.map((project) => <ProjectCard project={project} />)}
+    </div>
+
+    <p class="source-note" data-gh-source {...tr('projects.sourceLocal')}>{t('projects.sourceLocal')}</p>
+
+    {otherRepos.length > 0 && (
+      <div class="other-repos reveal">
+        <h3 class="subhead" {...tr('projects.othersTitle')}>{t('projects.othersTitle')}</h3>
+        <p class="muted" {...tr('projects.othersIntro')}>{t('projects.othersIntro')}</p>
+        <ul class="repo-list">
+          {otherRepos.map((r) => (
+            <li class="repo-item">
+              <a class="repo-name" href={r.url} target="_blank" rel="noopener">
+                <Icon name="folder" size={16} />
+                <span>{r.name}</span>
+              </a>
+              <span class="repo-note" {...tr(dataKey.otherRepo(r.repo))}>{t(dataKey.otherRepo(r.repo))}</span>
+              {r.language && <span class="repo-lang">{r.language}</span>}
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
+  </div>
+
+  {projects.map((project) => <ProjectDialog project={project} />)}
+</section>

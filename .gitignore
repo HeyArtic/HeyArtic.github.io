@@ -1,0 +1,19 @@
+# dependências e build
+node_modules/
+dist/
+.astro/
+
+# testes
+test-results/
+playwright-report/
+blob-report/
+
+# ambiente e sistema
+.env
+.env.*
+!.env.example
+.DS_Store
+Thumbs.db
+*.log
+.vscode/*
+!.vscode/extensions.json

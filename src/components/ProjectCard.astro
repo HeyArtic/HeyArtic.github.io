@@ -1,0 +1,90 @@
+---
+import Icon from './Icon.astro';
+import type { Project } from '../data/projects';
+import { dataKey } from '../i18n/dictionary';
+import { t, tr, trAttrs } from '../i18n/server';
+
+interface Props {
+  project: Project;
+}
+const { project: p } = Astro.props;
+
+const statusKey = {
+  production: 'projects.statusProduction',
+  study: 'projects.statusStudy',
+  'in-progress': 'projects.statusInProgress',
+}[p.status];
+
+const MAX_CHIPS = 5;
+const chips = p.tech.slice(0, MAX_CHIPS);
+const hidden = p.tech.length - chips.length;
+const k = (field: string) => dataKey.project(p.id, field);
+---
+<article
+  class:list={['card', 'project-card', 'reveal', { 'is-featured': p.featured }]}
+  data-project={p.id}
+  data-repo={p.repo}
+  aria-labelledby={`project-${p.id}-title`}
+>
+  <div class="card-top">
+    <span class="card-path">~/projects/{p.id}</span>
+    <span class={`status status-${p.status}`}>
+      <span class="status-dot" aria-hidden="true"></span>
+      <span {...tr(statusKey)}>{t(statusKey)}</span>
+    </span>
+  </div>
+
+  {p.featured && <p class="featured-tag" {...tr('projects.featured')}>{t('projects.featured')}</p>}
+
+  <h3 class="card-title" id={`project-${p.id}-title`}>{p.name}</h3>
+  <p class="card-context" {...tr(k('context'))}>{t(k('context'))}</p>
+  <p class="card-summary" {...tr(k('summary'))}>{t(k('summary'))}</p>
+
+  <p class="card-contrib">
+    <span class="card-contrib-label" {...tr('projects.contribution')}>{t('projects.contribution')}</span>
+    <span {...tr(k('contributionShort'))}>{t(k('contributionShort'))}</span>
+  </p>
+
+  <ul class="chips" aria-label="Stack">
+    {chips.map((tech) => <li class="chip">{tech}</li>)}
+    {hidden > 0 && <li class="chip chip-more" title={p.tech.slice(MAX_CHIPS).join(', ')}>+{hidden}</li>}
+  </ul>
+
+  {p.repo && (
+    <p class="gh-meta" data-gh-meta data-gh-repo={p.repo} data-gh-language={p.language ?? ''}>
+      {p.language ? t('projects.ghLanguage', { language: p.language }) : ''}
+    </p>
+  )}
+
+  <div class="card-actions">
+    <button
+      type="button"
+      class="btn btn-ghost btn-sm"
+      data-open-dialog={`project-${p.id}`}
+      aria-haspopup="dialog"
+      {...trAttrs({ 'aria-label': ['projects.detailsOf', { name: p.name }] })}
+    >
+      <Icon name="terminal" size={16} />
+      <span {...tr('projects.details')}>{t('projects.details')}</span>
+    </button>
+    <span class="card-links">
+      {p.demoUrl && (
+        <a class="link-icon" href={p.demoUrl} target="_blank" rel="noopener">
+          <Icon name="globe" size={16} />
+          <span {...tr('projects.demo')}>{t('projects.demo')}</span>
+        </a>
+      )}
+      {p.repoUrl ? (
+        <a class="link-icon" href={p.repoUrl} target="_blank" rel="noopener">
+          <Icon name="github" size={16} />
+          <span {...tr('projects.code')}>{t('projects.code')}</span>
+        </a>
+      ) : (
+        <span class="link-icon is-static">
+          <Icon name="lock" size={16} />
+          <span {...tr('projects.privateRepo')}>{t('projects.privateRepo')}</span>
+        </span>
+      )}
+    </span>
+  </div>
+</article>

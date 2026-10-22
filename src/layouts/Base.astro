@@ -1,0 +1,75 @@
+---
+import '@fontsource-variable/inter';
+import '@fontsource-variable/jetbrains-mono';
+import '../styles/global.css';
+import { site } from '../config/site';
+import { dictionaries, t, serializeForScript } from '../i18n/server';
+import { withBase } from '../lib/url';
+
+const canonical = new URL(withBase(''), Astro.site).href;
+const ogImage = new URL(withBase('og-image.png'), Astro.site).href;
+const title = t('meta.title');
+const description = t('meta.description');
+
+const sameAs = [site.github.url, site.linkedin].filter(Boolean);
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: site.name,
+  url: canonical,
+  sameAs,
+};
+---
+<!doctype html>
+<html lang="pt-BR" class="no-js">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#0c0e0f" />
+    <meta name="author" content={site.name} />
+    <link rel="icon" href={withBase('favicon.svg')} type="image/svg+xml" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:locale:alternate" content="en_US" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <script type="application/ld+json" set:html={serializeForScript(jsonLd)} />
+
+    <script is:inline>
+      // Executa antes da pintura: marca JS ativo e evita "piscar" em português
+      // quando a preferência salva for inglês.
+      (function () {
+        var root = document.documentElement;
+        root.classList.remove('no-js');
+        root.classList.add('js');
+        var lang = null;
+        try {
+          lang = new URLSearchParams(location.search).get('lang') || localStorage.getItem('portfolio-lang');
+        } catch (e) {}
+        if (lang === 'en') {
+          root.classList.add('i18n-pending');
+          setTimeout(function () { root.classList.remove('i18n-pending'); }, 1500);
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#conteudo" data-i18n="a11y.skip">{t('a11y.skip')}</a>
+    <slot />
+    <script type="application/json" id="i18n-dict" set:html={serializeForScript(dictionaries)} />
+    <script>
+      import '../scripts/main';
+    </script>
+  </body>
+</html>

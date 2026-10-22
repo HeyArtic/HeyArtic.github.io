@@ -1,0 +1,20 @@
+---
+import { site } from '../config/site';
+import { t, tr } from '../i18n/server';
+const year = new Date().getFullYear();
+---
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <p>
+      <span>© {year} {site.name}</span>
+      <span class="sep" aria-hidden="true">·</span>
+      <span {...tr('footer.built')}>{t('footer.built')}</span>
+    </p>
+    <p class="footer-links">
+      {site.sourceRepo && (
+        <a class="link-muted" href={site.sourceRepo} target="_blank" rel="noopener" {...tr('footer.source')}>{t('footer.source')}</a>
+      )}
+      <a class="link-muted" href="#inicio" {...tr('footer.top')}>{t('footer.top')}</a>
+    </p>
+  </div>
+</footer>

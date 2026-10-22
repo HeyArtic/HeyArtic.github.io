@@ -1,0 +1,76 @@
+---
+import Icon from './Icon.astro';
+import SectionHeading from './SectionHeading.astro';
+import { site } from '../config/site';
+import { t, tr, trAttrs } from '../i18n/server';
+import { withBase } from '../lib/url';
+
+const resume = site.resume.pt ? withBase(site.resume.pt) : null;
+const resumeEn = site.resume.en ? withBase(site.resume.en) : resume;
+---
+<section class="section section-alt" id="contato" aria-labelledby="contact-title">
+  <div class="container">
+    <SectionHeading id="contact-title" command="contact.command" title="contact.title" intro="contact.intro" />
+
+    <ul class="contact-grid">
+      {site.email && (
+        <li class="card contact-card reveal">
+          <a class="contact-link" href={`mailto:${site.email}`}>
+            <Icon name="mail" size={22} />
+            <span class="contact-text">
+              <span class="contact-label" {...tr('contact.email')}>{t('contact.email')}</span>
+              <span class="contact-value">{site.email}</span>
+            </span>
+          </a>
+          <button type="button" class="icon-btn icon-btn-sm" data-copy={site.email} {...trAttrs({ 'aria-label': 'contact.copy', title: 'contact.copy' })}>
+            <Icon name="copy" size={16} class="icon-copy" />
+            <Icon name="check" size={16} class="icon-copied" />
+          </button>
+          <span class="sr-only" role="status" data-copy-status></span>
+        </li>
+      )}
+      {site.linkedin && (
+        <li class="card contact-card reveal">
+          <a class="contact-link" href={site.linkedin} target="_blank" rel="noopener me">
+            <Icon name="linkedin" size={22} />
+            <span class="contact-text">
+              <span class="contact-label" {...tr('contact.linkedin')}>{t('contact.linkedin')}</span>
+              <span class="contact-value">{site.linkedin.replace(/^https:\/\/(www\.)?/, '')}</span>
+            </span>
+            <Icon name="external" size={16} class="contact-ext" />
+          </a>
+        </li>
+      )}
+      <li class="card contact-card reveal">
+        <a class="contact-link" href={site.github.url} target="_blank" rel="noopener me">
+          <Icon name="github" size={22} />
+          <span class="contact-text">
+            <span class="contact-label" {...tr('contact.github')}>{t('contact.github')}</span>
+            <span class="contact-value">github.com/{site.github.username}</span>
+          </span>
+          <Icon name="external" size={16} class="contact-ext" />
+        </a>
+      </li>
+      {resume && (
+        <li class="card contact-card reveal">
+          <a
+            class="contact-link"
+            href={resume}
+            target="_blank"
+            rel="noopener"
+            data-resume-link
+            data-href-pt={resume}
+            data-href-en={resumeEn}
+          >
+            <Icon name="file" size={22} />
+            <span class="contact-text">
+              <span class="contact-label" {...tr('contact.resume')}>{t('contact.resume')}</span>
+              <span class="contact-value">alisson-abreu-curriculo.pdf</span>
+            </span>
+            <Icon name="external" size={16} class="contact-ext" />
+          </a>
+        </li>
+      )}
+    </ul>
+  </div>
+</section>

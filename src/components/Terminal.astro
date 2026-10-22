@@ -1,0 +1,84 @@
+---
+import SectionHeading from './SectionHeading.astro';
+import { site } from '../config/site';
+import { projects } from '../data/projects';
+import { skillCategories } from '../data/skills';
+import { certificates } from '../data/certificates';
+import { dataKey } from '../i18n/dictionary';
+import { t, tr, trAttrs, serializeForScript } from '../i18n/server';
+import { sortByDateDesc, totalHours } from '../lib/certificates';
+import { withBase } from '../lib/url';
+import type { TerminalData } from '../lib/terminal';
+
+const suggestions = ['help', 'about', 'projects', 'skills', 'certs', 'contact'];
+
+const contacts: TerminalData['contacts'] = [
+  { labelKey: 'contact.github', href: site.github.url, display: `github.com/${site.github.username}` },
+];
+if (site.linkedin) {
+  contacts.push({ labelKey: 'contact.linkedin', href: site.linkedin, display: site.linkedin.replace(/^https:\/\/(www\.)?/, '') });
+}
+if (site.email) contacts.push({ labelKey: 'contact.email', href: `mailto:${site.email}`, display: site.email });
+
+const data: TerminalData = {
+  name: site.name,
+  projects: projects.map((p) => ({ id: p.id, name: p.name, summaryKey: dataKey.project(p.id, 'summary') })),
+  skills: skillCategories.map((c) => ({
+    titleKey: dataKey.skillCategory(c.id),
+    itemKeys: c.skills.map((_, i) => dataKey.skillName(c.id, i)),
+  })),
+  contacts,
+  resumeHref: site.resume.pt ? withBase(site.resume.pt) : null,
+  certificates: {
+    count: certificates.length,
+    hours: totalHours(certificates),
+    latestTitle: sortByDateDesc(certificates)[0]?.title ?? null,
+  },
+};
+---
+<section class="section" id="terminal" aria-labelledby="terminal-title">
+  <div class="container">
+    <SectionHeading id="terminal-title" command="terminal.command" title="terminal.title" intro="terminal.intro" />
+
+    <div class="term reveal" data-terminal>
+      <div class="term-bar">
+        <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="term-title" {...tr('terminal.windowTitle')}>{t('terminal.windowTitle')}</span>
+      </div>
+
+      <div class="term-output" role="log" aria-live="polite" tabindex="-1" data-term-output>
+        <p class="term-line" {...tr('terminal.welcome')}>{t('terminal.welcome')}</p>
+        <p class="term-line tone-muted" {...tr('terminal.hint')}>{t('terminal.hint')}</p>
+      </div>
+
+      <form class="term-form" autocomplete="off" data-term-form>
+        <label class="term-prompt" for="term-input">
+          <span aria-hidden="true">guest@portfolio:~$</span>
+          <span class="sr-only" {...tr('terminal.inputLabel')}>{t('terminal.inputLabel')}</span>
+        </label>
+        <input
+          id="term-input"
+          class="term-input"
+          type="text"
+          inputmode="text"
+          autocapitalize="off"
+          autocorrect="off"
+          spellcheck="false"
+          maxlength="64"
+          enterkeyhint="send"
+          data-term-input
+        />
+        <button type="submit" class="btn btn-ghost btn-sm term-run">
+          <span {...tr('terminal.run')}>{t('terminal.run')}</span>
+        </button>
+      </form>
+
+      <div class="term-suggest" role="group" {...trAttrs({ 'aria-label': 'terminal.suggestions' })}>
+        {suggestions.map((cmd) => (
+          <button type="button" class="chip chip-btn" data-term-suggest={cmd}>{cmd}</button>
+        ))}
+      </div>
+    </div>
+  </div>
+  <script type="application/json" id="terminal-data" set:html={serializeForScript(data)} />
+</section>

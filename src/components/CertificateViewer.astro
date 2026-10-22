@@ -1,0 +1,52 @@
+---
+import Icon from './Icon.astro';
+import { t, tr, trAttrs } from '../i18n/server';
+---
+<dialog class="dialog dialog-viewer" id="cert-viewer" aria-labelledby="cert-viewer-title" data-dialog data-cert-viewer>
+  <div class="dialog-panel">
+    <header class="dialog-head">
+      <div class="viewer-heading">
+        <p class="card-path" data-viewer-file></p>
+        <h2 class="dialog-title" id="cert-viewer-title" lang="pt-BR" data-viewer-title></h2>
+        <p class="card-context" data-viewer-issuer></p>
+      </div>
+      <button type="button" class="icon-btn" data-close-dialog {...trAttrs({ 'aria-label': 'dialog.close' })}>
+        <Icon name="close" size={20} />
+      </button>
+    </header>
+
+    <div class="viewer-actions">
+      <button type="button" class="btn btn-ghost btn-sm" data-close-dialog>
+        <Icon name="arrow" size={16} class="flip" />
+        <span {...tr('viewer.back')}>{t('viewer.back')}</span>
+      </button>
+      <span class="viewer-actions-end">
+        <a class="btn btn-secondary btn-sm" data-viewer-open target="_blank" rel="noopener">
+          <Icon name="external" size={16} />
+          <span {...tr('certs.open')}>{t('certs.open')}</span>
+        </a>
+        <a class="btn btn-secondary btn-sm" data-viewer-download download>
+          <Icon name="download" size={16} />
+          <span {...tr('certs.download')}>{t('certs.download')}</span>
+        </a>
+        <a class="btn btn-ghost btn-sm" data-viewer-verify target="_blank" rel="noopener" hidden>
+          <Icon name="shield" size={16} />
+          <span {...tr('certs.verify')}>{t('certs.verify')}</span>
+        </a>
+      </span>
+    </div>
+
+    <div class="viewer-body">
+      <p class="viewer-state" data-viewer-loading {...tr('viewer.loading')}>{t('viewer.loading')}</p>
+      <div class="viewer-state" data-viewer-fallback hidden>
+        <Icon name="file" size={32} />
+        <p {...tr('viewer.fallback')}>{t('viewer.fallback')}</p>
+      </div>
+      <div class="viewer-state is-error" data-viewer-error hidden>
+        <Icon name="file" size={32} />
+        <p {...tr('viewer.error')}>{t('viewer.error')}</p>
+      </div>
+      <iframe class="viewer-frame" data-viewer-frame hidden></iframe>
+    </div>
+  </div>
+</dialog>

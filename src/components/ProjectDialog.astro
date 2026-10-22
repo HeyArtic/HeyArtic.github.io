@@ -1,0 +1,117 @@
+---
+import Icon from './Icon.astro';
+import type { Project } from '../data/projects';
+import { certificates } from '../data/certificates';
+import { dataKey } from '../i18n/dictionary';
+import { t, tr, trAttrs } from '../i18n/server';
+
+interface Props {
+  project: Project;
+}
+const { project: p } = Astro.props;
+const k = (field: string) => dataKey.project(p.id, field);
+const item = (field: string, i: number) => dataKey.projectItem(p.id, field, i);
+const titleId = `project-${p.id}-dialog-title`;
+const related = (p.relatedCertificates ?? [])
+  .map((id) => certificates.find((c) => c.id === id))
+  .filter((c): c is NonNullable<typeof c> => Boolean(c));
+const featuresKey = p.featuresSource === 'site' ? 'dialog.featuresSite' : 'dialog.featuresCode';
+---
+<dialog class="dialog" id={`project-${p.id}`} aria-labelledby={titleId} data-dialog>
+  <div class="dialog-panel">
+    <header class="dialog-head">
+      <div>
+        <p class="card-path">~/projects/{p.id}</p>
+        <h2 class="dialog-title" id={titleId}>{p.name}</h2>
+        <p class="card-context" {...tr(k('context'))}>{t(k('context'))}</p>
+      </div>
+      <button type="button" class="icon-btn" data-close-dialog {...trAttrs({ 'aria-label': 'dialog.close' })}>
+        <Icon name="close" size={20} />
+      </button>
+    </header>
+
+    <div class="dialog-body" tabindex="0">
+      <section class="dialog-section">
+        <h3 {...tr('dialog.goal')}>{t('dialog.goal')}</h3>
+        <p {...tr(k('goal'))}>{t(k('goal'))}</p>
+      </section>
+
+      <section class="dialog-section">
+        <h3 {...tr('dialog.problem')}>{t('dialog.problem')}</h3>
+        <p {...tr(k('problem'))}>{t(k('problem'))}</p>
+      </section>
+
+      <section class="dialog-section">
+        <h3 {...tr('dialog.contribution')}>{t('dialog.contribution')}</h3>
+        <p {...tr(k('contribution'))}>{t(k('contribution'))}</p>
+      </section>
+
+      <section class="dialog-section">
+        <h3 {...tr('dialog.tech')}>{t('dialog.tech')}</h3>
+        <ul class="chips">
+          {p.tech.map((tech) => <li class="chip">{tech}</li>)}
+        </ul>
+      </section>
+
+      {p.features.length > 0 && (
+        <section class="dialog-section">
+          <h3 {...tr(featuresKey)}>{t(featuresKey)}</h3>
+          <ul class="list">
+            {p.features.map((_, i) => <li {...tr(item('features', i))}>{t(item('features', i))}</li>)}
+          </ul>
+        </section>
+      )}
+
+      {p.technical.length > 0 && (
+        <section class="dialog-section">
+          <h3 {...tr('dialog.technical')}>{t('dialog.technical')}</h3>
+          <ul class="list">
+            {p.technical.map((_, i) => <li {...tr(item('technical', i))}>{t(item('technical', i))}</li>)}
+          </ul>
+        </section>
+      )}
+
+      {p.notes && p.notes.length > 0 && (
+        <section class="dialog-section dialog-note">
+          <h3 {...tr('dialog.notes')}>{t('dialog.notes')}</h3>
+          <ul class="list">
+            {p.notes.map((_, i) => <li {...tr(item('notes', i))}>{t(item('notes', i))}</li>)}
+          </ul>
+        </section>
+      )}
+
+      {related.length > 0 && (
+        <section class="dialog-section">
+          <h3 {...tr('dialog.related')}>{t('dialog.related')}</h3>
+          <ul class="related-list">
+            {related.map((c) => (
+              <li>
+                <button type="button" class="link-btn" data-open-cert={c.id}>
+                  <Icon name="file" size={16} />
+                  <span>{c.title}</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+    </div>
+
+    {(p.demoUrl || p.repoUrl) && (
+      <footer class="dialog-foot">
+        {p.demoUrl && (
+          <a class="btn btn-primary btn-sm" href={p.demoUrl} target="_blank" rel="noopener">
+            <Icon name="globe" size={16} />
+            <span {...tr('dialog.openDemo')}>{t('dialog.openDemo')}</span>
+          </a>
+        )}
+        {p.repoUrl && (
+          <a class="btn btn-secondary btn-sm" href={p.repoUrl} target="_blank" rel="noopener">
+            <Icon name="github" size={16} />
+            <span {...tr('dialog.openRepo')}>{t('dialog.openRepo')}</span>
+          </a>
+        )}
+      </footer>
+    )}
+  </div>
+</dialog>

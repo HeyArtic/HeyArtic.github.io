@@ -1,0 +1,35 @@
+---
+import SectionHeading from './SectionHeading.astro';
+import { site } from '../config/site';
+import { dataKey } from '../i18n/dictionary';
+import { t, tr, trAttrs } from '../i18n/server';
+
+const facts = [
+  site.location ? { label: 'about.facts.location', value: dataKey.location() } : null,
+  { label: 'about.facts.focus', value: 'about.values.focus' },
+  { label: 'about.facts.education', value: 'about.values.education' },
+  { label: 'about.facts.languages', value: 'about.values.languages' },
+  { label: 'about.facts.status', value: 'about.values.status' },
+].filter((f): f is { label: string; value: string } => f !== null);
+---
+<section class="section section-alt" id="sobre" aria-labelledby="about-title">
+  <div class="container about-grid">
+    <div>
+      <SectionHeading id="about-title" command="about.command" title="about.title" />
+      <div class="prose reveal">
+        <p {...tr('about.p1')}>{t('about.p1')}</p>
+        <p {...tr('about.p2')}>{t('about.p2')}</p>
+        <p {...tr('about.p3')}>{t('about.p3')}</p>
+      </div>
+    </div>
+
+    <dl class="facts reveal" {...trAttrs({ 'aria-label': 'about.factsLabel' })}>
+      {facts.map((f) => (
+        <div class="fact">
+          <dt {...tr(f.label)}>{t(f.label)}</dt>
+          <dd {...tr(f.value)}>{t(f.value)}</dd>
+        </div>
+      ))}
+    </dl>
+  </div>
+</section>

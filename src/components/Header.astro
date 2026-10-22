@@ -1,0 +1,48 @@
+---
+import Icon from './Icon.astro';
+import { site } from '../config/site';
+import { t, tr, trAttrs } from '../i18n/server';
+
+const links = [
+  { href: '#inicio', key: 'nav.home' },
+  { href: '#projetos', key: 'nav.projects' },
+  { href: '#competencias', key: 'nav.skills' },
+  { href: '#certificados', key: 'nav.certificates' },
+  { href: '#sobre', key: 'nav.about' },
+  { href: '#terminal', key: 'nav.terminal' },
+  { href: '#contato', key: 'nav.contact' },
+];
+---
+<header class="site-header" data-header>
+  <div class="container header-inner">
+    <a class="brand" href="#inicio" aria-label={site.name}>
+      <span class="brand-prompt" aria-hidden="true">~/</span><span class="brand-name">{site.name.toLowerCase().replace(/\s+/g, '-')}</span>
+    </a>
+
+    <nav class="nav" id="site-nav" {...trAttrs({ 'aria-label': 'nav.label' })} data-nav>
+      <ul class="nav-list">
+        {links.map((l) => (
+          <li><a class="nav-link" href={l.href} {...tr(l.key)}>{t(l.key)}</a></li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="header-actions">
+      <div class="lang-switch" role="group" {...trAttrs({ 'aria-label': 'nav.langGroup' })}>
+        <button type="button" class="lang-btn" data-lang-btn="pt" aria-pressed="true" lang="pt-BR" title="Português">PT</button>
+        <button type="button" class="lang-btn" data-lang-btn="en" aria-pressed="false" lang="en" title="English">EN</button>
+      </div>
+      <button
+        type="button"
+        class="icon-btn nav-toggle"
+        aria-controls="site-nav"
+        aria-expanded="false"
+        data-nav-toggle
+        {...trAttrs({ 'aria-label': 'nav.menuOpen' })}
+      >
+        <Icon name="menu" size={20} class="icon-open" />
+        <Icon name="close" size={20} class="icon-close" />
+      </button>
+    </div>
+  </div>
+</header>

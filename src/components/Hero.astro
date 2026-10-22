@@ -1,0 +1,96 @@
+---
+import Icon from './Icon.astro';
+import { site } from '../config/site';
+import { t, tr, trAttrs } from '../i18n/server';
+import { withBase } from '../lib/url';
+
+const resumePt = site.resume.pt ? withBase(site.resume.pt) : null;
+const resumeEn = site.resume.en ? withBase(site.resume.en) : resumePt;
+---
+<section class="hero" id="inicio" aria-labelledby="hero-title">
+  <div class="container hero-grid">
+    <div class="hero-copy">
+      <p class="cmd-line reveal">
+        <span class="cmd-prompt" aria-hidden="true">$</span>
+        <span>{t('hero.prompt')}</span>
+      </p>
+      <p class="hero-name reveal">
+        {site.name}
+        <span class="hero-role" {...tr('hero.role')}>{t('hero.role')}</span>
+      </p>
+      <h1 class="hero-title reveal" id="hero-title">
+        <span class="hero-title-lead">{t('hero.titleLead')}</span>
+        <span class="hero-title-dash" aria-hidden="true"> — </span>
+        <span class="hero-title-rest" {...tr('hero.titleRest')}>{t('hero.titleRest')}</span>
+      </h1>
+      <p class="hero-desc reveal" {...tr('hero.description')}>{t('hero.description')}</p>
+
+      <div class="hero-actions reveal">
+        <a class="btn btn-primary" href="#projetos">
+          <span {...tr('hero.ctaProjects')}>{t('hero.ctaProjects')}</span>
+          <Icon name="arrow" size={16} />
+        </a>
+        {resumePt && (
+          <span class="btn-group">
+            <a
+              class="btn btn-secondary"
+              href={resumePt}
+              target="_blank"
+              rel="noopener"
+              data-resume-link
+              data-href-pt={resumePt}
+              data-href-en={resumeEn}
+            >
+              <Icon name="file" size={16} />
+              <span {...tr('hero.ctaResume')}>{t('hero.ctaResume')}</span>
+              <span class="btn-note" {...tr('hero.resumeNote')}>{t('hero.resumeNote')}</span>
+            </a>
+            <a
+              class="btn btn-secondary btn-icon"
+              href={resumePt}
+              download
+              data-resume-link
+              data-href-pt={resumePt}
+              data-href-en={resumeEn}
+              {...trAttrs({ 'aria-label': 'hero.ctaResumeDownload', title: 'hero.ctaResumeDownload' })}
+            >
+              <Icon name="download" size={16} />
+            </a>
+          </span>
+        )}
+      </div>
+
+      <ul class="hero-links reveal">
+        <li>
+          <a class="link-muted" href={site.github.url} target="_blank" rel="noopener me">
+            <Icon name="github" size={18} />
+            <span>github.com/{site.github.username}</span>
+          </a>
+        </li>
+        {site.linkedin && (
+          <li>
+            <a class="link-muted" href={site.linkedin} target="_blank" rel="noopener me">
+              <Icon name="linkedin" size={18} />
+              <span>LinkedIn</span>
+            </a>
+          </li>
+        )}
+      </ul>
+    </div>
+
+    <figure class="code-card reveal" {...trAttrs({ 'aria-label': 'hero.codeLabel' })}>
+      <figcaption class="code-card-bar">
+        <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="code-card-file">profile.py</span>
+      </figcaption>
+      <pre class="code" aria-hidden="true"><code><span class="tk-kw">class</span> <span class="tk-cls">Developer</span>:
+    name  = <span class="tk-str">"{site.name}"</span>
+    role  = <span class="tk-str">"Backend Developer"</span>
+    stack = [<span class="tk-str">"Python"</span>, <span class="tk-str">"Flask"</span>, <span class="tk-str">"SQL"</span>]
+    tools = [<span class="tk-str">"Redis"</span>, <span class="tk-str">"RabbitMQ"</span>, <span class="tk-str">"Git"</span>]
+
+<span class="tk-kw">    def</span> <span class="tk-fn">focus</span>(self):
+        <span class="tk-kw">return</span> <span class="tk-str">"clean, tested APIs"</span><span class="cursor" aria-hidden="true"></span></code></pre>
+    </figure>
+  </div>
+</section>
