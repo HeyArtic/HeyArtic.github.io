@@ -153,7 +153,7 @@ const pt = {
     command: 'cat about.md',
     title: 'Sobre mim',
     p1: 'Sou desenvolvedor backend com foco em Python. Desde agosto de 2022 trabalho como escrevente autorizado em um cartório, onde também desenvolvo automações em Python para processos internos e atuo como encarregado de dados (LGPD).',
-    p2: 'Curso Análise e Desenvolvimento de Sistemas na Estácio (2025–2027) e concluí em outubro de 2026 a formação em Python da Rocketseat (100h), que passou por Flask, SQLAlchemy, Pytest, Redis, RabbitMQ, MongoDB e FastAPI.',
+    p2: 'Curso Análise e Desenvolvimento de Sistemas na Estácio (2024–2027) e concluí em outubro de 2026 a formação em Python da Rocketseat (100h), que passou por Flask, SQLAlchemy, Pytest, Redis, RabbitMQ, MongoDB e FastAPI.',
     p3: 'Hoje atuo principalmente no backend do NutriDiet, desenvolvido em parceria com um amigo. Nos projetos, procuro separar responsabilidades em camadas, validar entradas e escrever testes. Meu próximo passo é aprofundar arquitetura de APIs, bancos de dados e mensageria em um time de desenvolvimento.',
     factsLabel: 'Informações rápidas',
     facts: {
@@ -390,7 +390,7 @@ const en: DeepString<typeof pt> = {
     command: 'cat about.md',
     title: 'About me',
     p1: 'I am a backend developer focused on Python. Since August 2022 I have worked as an authorized clerk at a notary office in Brazil, where I also write Python automations for internal processes and serve as the data protection officer (LGPD).',
-    p2: 'I am studying Systems Analysis and Development at Estácio (2025–2027), and in October 2026 I completed the Rocketseat Python program (100 hours), which covered Flask, SQLAlchemy, Pytest, Redis, RabbitMQ, MongoDB and FastAPI.',
+    p2: 'I am studying Systems Analysis and Development at Estácio (2024–2027), and in October 2026 I completed the Rocketseat Python program (100 hours), which covered Flask, SQLAlchemy, Pytest, Redis, RabbitMQ, MongoDB and FastAPI.',
     p3: 'Today I mainly work on the NutriDiet backend, built together with a friend. In my projects I keep responsibilities in separate layers, validate input and write tests. My next step is to go deeper into API architecture, databases and messaging as part of a development team.',
     factsLabel: 'Quick facts',
     facts: {
