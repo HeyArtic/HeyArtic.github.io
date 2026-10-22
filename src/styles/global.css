@@ -736,6 +736,7 @@ a.link-icon:hover { color: var(--accent-strong); }
   .dialog,
   .dialog-viewer { width: 100vw; max-height: 100dvh; height: 100dvh; border-radius: 0; border: 0; }
   .viewer-actions .btn { flex: 1 1 auto; }
+  .dialog-title { font-size: 1.15rem; }
 }
 
 /* ==========================================================================

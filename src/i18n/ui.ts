@@ -165,7 +165,7 @@ const pt = {
     },
     values: {
       focus: 'Backend · Python · APIs REST',
-      education: 'ADS · Estácio (2025–2027)',
+      education: 'ADS · Estácio (2024–2027)',
       languages: 'Português (nativo) · Inglês (leitura técnica)',
       status: 'Aberto a vagas de Backend Júnior',
     },
